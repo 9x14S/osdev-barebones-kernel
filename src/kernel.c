@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "kernel.h"
 #include "kernel_utility.h"
 
 #ifdef __linux__
@@ -84,8 +85,8 @@ void terminal_initialize(void)
   terminal_buffer = (uint16_t *) VGA_BUFFER_ADDR;
 
   // Clear the terminal buffer
-  for (int y = 0; y < VGA_HEIGHT; y++)
-    for (int x = 0; x < VGA_WIDTH; x++) {
+  for (size_t y = 0; y < VGA_HEIGHT; y++)
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
       // The tutorial had a `const` here
       size_t index = y * VGA_WIDTH + x;
       terminal_buffer[index] = vga_entry(' ', terminal_color);
@@ -125,7 +126,7 @@ void terminal_putchar(char character)
 
 void terminal_write(const char *data, size_t size)
 {
-  for (int i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++)
     terminal_putchar(data[i]);
 }
 
