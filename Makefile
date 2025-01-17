@@ -16,7 +16,7 @@ CC=$(T_BIN_DIR)/$(T_TARGET)-gcc
 LD=$(T_BIN_DIR)/$(T_TARGET)-ld
 
 # Set up everything
-all: $(B_DIR) $(B_DIR)/boot.o
+all: $(B_DIR) $(B_DIR)/boot.o $(B_DIR)/kernel.o
 	@echo "Done!"
 
 # Make sure the build directory exists, else make it
@@ -27,3 +27,6 @@ $(B_DIR):
 $(B_DIR)/boot.o: $(S_DIR)/boot.s
 	$(AS) -o $@ $<
 
+$(B_DIR)/kernel.o: $(S_DIR)/kernel.c
+	# No -O2 yet
+	$(CC) -c $< -o $@ -std=gnu99 -ffreestanding -Wall -Wextra
