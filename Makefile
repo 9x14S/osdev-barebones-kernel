@@ -1,4 +1,4 @@
-.PHONY : all clean test
+.PHONY : all clean test run
 
 # Toolchain target
 T_TARGET=i686-elf
@@ -69,3 +69,6 @@ test:
 	else\
 		echo "Invalid multiboot kernel";\
 	fi
+
+run:
+	qemu-system-i386 -kernel $(KERNEL_BIN)
