@@ -93,17 +93,41 @@ void terminal_initialize(void)
     }
 }
 
+// Scrolls the terminal one row upwards
+void terminal_scroll(void)
+{
+  for (size_t y = 1; y < VGA_HEIGHT; y++)
+  {
+    for (size_t x = 0; x < VGA_WIDTH; x++)
+    {
+      size_t previous_line = (y-1) * VGA_WIDTH + x;
+      size_t current_line = y * VGA_WIDTH + x;
+      terminal_buffer[previous_line] = terminal_buffer[current_line];
+    }
+  }
+
+  // Clear last line
+  for (size_t x = 0; x < VGA_WIDTH; x++)
+  {
+    size_t index = (VGA_HEIGHT-1) * VGA_WIDTH + x;
+    terminal_buffer[index] = terminal_color;
+  }
+}
+
+// Sets the global terminal color
 void terminal_setcolor(uint8_t color)
 {
   terminal_color = color;
 }
 
+// Writes the character and its color into the VGA buffer
 void terminal_putentryat(char character, uint8_t color, size_t x, size_t y)
 {
   const size_t index = y * VGA_WIDTH + x;
   terminal_buffer[index] = vga_entry(character, color);
 }
 
+// Wrapper over terminal_putentryat that handles forward printing and scrolling
 void terminal_putchar(char character)
 {
   if (character != '\n')
@@ -120,16 +144,22 @@ void terminal_putchar(char character)
     terminal_column = 0;
 
     if (++terminal_row >= VGA_HEIGHT)
-      terminal_row = 0;
+    {
+      /*terminal_row = 0;*/
+      terminal_row = VGA_HEIGHT - 1;
+      terminal_scroll();
+    }
   }
 }
 
+// Writes a buffer to the VGA
 void terminal_write(const char *data, size_t size)
 {
   for (size_t i = 0; i < size; i++)
     terminal_putchar(data[i]);
 }
 
+// Writes a string to the VGA
 void terminal_writestring(const char *string)
 {
   terminal_write(string, strlen(string));
