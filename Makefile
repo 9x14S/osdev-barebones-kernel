@@ -1,4 +1,4 @@
-.PHONY : all clean
+.PHONY : all clean test
 
 # Toolchain target
 T_TARGET=i686-elf
@@ -61,3 +61,11 @@ $(BOOT_OBJ): $(BOOT_SOURCE)
 
 clean:
 	rm $(B_DIR)/* -f
+
+test:
+	@grub-file --is-x86-multiboot $(KERNEL_BIN)
+	@if [ -z $? ]; then\
+		echo "Valid multiboot kernel";\
+	else\
+		echo "Invalid multiboot kernel";\
+	fi
